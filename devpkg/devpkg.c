@@ -12,7 +12,7 @@ int main(int argc, const char const  *argv[])
 {
     apr_pool_t *p = NULL;
     apr_pool_initialize();
-    apr_pool_crate(&p, NULL);
+    apr_pool_create(&p, NULL);
 
     apr_getopt_t *opt;
     apr_status_t rv;
@@ -37,10 +37,10 @@ int main(int argc, const char const  *argv[])
               break;
             case 'c':
               configure_opts = optarg;
-              breka;
-            case "m":
+              break;
+            case 'm':
               make_opts = optarg;
-              breka;
+              break;
             case 'i':
               install_opts = optarg;
               break;

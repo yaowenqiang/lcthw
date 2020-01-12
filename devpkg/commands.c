@@ -1,4 +1,4 @@
-#include <apr_url.h>
+#include <apr_uri.h>
 #include <apr_fnmatch.h>
 #include <unistd.h>
 
@@ -23,7 +23,7 @@ int Command_depends(apr_pool_t *p, const char *path)
         btrimws(line);
         log_info("Processing depends: %s", bdata(line));
 
-        int rc = Command_install(p, bdata(line), NULL, Null, Null)''
+        int rc = Command_install(p, bdata(line), NULL, NULL, NULL);
 
         check(rc ==0, "Failed to install: %s", bdata(line));
         bdestroy(line);
@@ -55,10 +55,10 @@ int Command_fetch(apr_pool_t *p, const char *url, int fetch_only)
     check(rv == APR_SUCCESS, "Failed to parse URL: %s", url);
 
     if(apr_fnmatch(GIT_PAT, info.path, 0) == APR_SUCCESS) {
-          rc = Shell_exec(GIT_PAT, "URL", url, NULL);
-          chekc(rc == 0, "git failed.");
+          rc = Shell_exec(GIT_SH, "URL", url, NULL);
+          check(rc == 0, "git failed.");
     } else if(apr_fnmatch(DEPEND_PAT, info.path, 0) == APR_SUCCESS) {
-        chekc(fetch_only, "No point in fetching a DEPENDS file.");
+        check(fetch_only, "No point in fetching a DEPENDS file.");
 
         if(info.scheme) {
             depends_file = DEPENDS_PATH;
@@ -95,7 +95,7 @@ int Command_fetch(apr_pool_t *p, const char *url, int fetch_only)
             }
 
             apr_status_t rc = apr_dir_make_recursive(BUILD_DIR, 
-                apr_uread | APR_UWRITE | APR_UEXECUTE, p);
+                APR_UREAD | APR_UWRITE | APR_UEXECUTE, p);
 
             check(rc == 0, "Failed to make directory %s", BUILD_DIR);
 
@@ -118,7 +118,7 @@ int Command_build(apr_pool_t *p, const char *url, const char *configure_opts,
     int rc = 0;
     check(access(BUILD_DIR, X_OK | R_OK | W_OK) == 0, "Build directory doesn't exit: %s", BUILD_DIR);
 
-    if(access(CONFIGURE_OPTS, X_OK) == 0) {
+    if(access(CONFIG_SCRIPT, X_OK) == 0) {
         log_info("Has a configure script, running it.");
 
         rc = Shell_exec(CONFIGURE_SH, "OPTS", configure_opts, NULL);
@@ -131,7 +131,7 @@ int Command_build(apr_pool_t *p, const char *url, const char *configure_opts,
     check(rc == 0, "Failed to buid.");
 
     rc = Shell_exec(INSTALL_SH, 
-        "TARGET", installN ? install_opts,: "install", NULL);
+        "TARGET", install_opts ? install_opts: "install", NULL);
 
     check(rc == 0, "Failed to install.");
 
@@ -152,7 +152,7 @@ int Command_install(apr_pool_t *p, const char *url, const char *configure_opts,
     int rc = 0;
     check(Shell_exec(CLEANUP_SH, NULL) == 0, "Failedto cleanup before building.");
 
-    rc = Db_find(url);
+    rc = DB_find(url);
 
     check(rc != -1, "Error checking the instal ldatabase.");
 
@@ -167,7 +167,7 @@ int Command_install(apr_pool_t *p, const char *url, const char *configure_opts,
         rc = Command_build(p, url, configure_opts, make_opts, install_opts);
         check(rc == 0, "Failed to build: %s", url);
     } else if(rc == 0) {
-        log_info("Depends successfully installed: 5s", url);
+        log_info("Depends successfully installed: %s", url);
     } else {
         sentinel("Install failed: %s", url);
     }
