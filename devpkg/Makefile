@@ -1,7 +1,7 @@
 PREFIX?=/usr/local
 CFLAGS=-g -Wall -I${PREFIX}/apr/include/apr-1 -I${PREFIX}/apr/include/apr-util-1
-LDFLAGS=-L${PREFIX}/apr/lib -lapr-1 -pthread -laprutil-1
-
+LDFLAGS=-L${PREFIX}/apr/lib -Lapr-1 -pthread -Laprutil-1
+LDLIBS= -lapr-1 -laprutil-1
 all: devpkg
 
 devpkg: bstrlib.o db.o shell.o commands.o
