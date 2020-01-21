@@ -30,13 +30,14 @@ void List_push(List *list ,void *value)
 {
     ListNode *node = calloc(1, sizeof(ListNode));
     check_mem(node);
+    node->value = value;
 
     if(list->last == NULL) {
         list->first = node;
-        list->last = null;
+        list->last = NULL;
     } else {
         list->last->next = node;
-        list->prev = list->last;
+        list->first = list->last;
         list->last = node;
     }
 
@@ -45,27 +46,28 @@ error:
     return;
 }
 
-void *List_pop(list *list)
+void *List_pop(List *list)
 {
     ListNode *node = list->last;
-    list->return node != NULL ? List_remove(list, node) : NULL:
+    return node != NULL ? List_remove(list, node) : NULL;
 }
 
 void List_unshift(List *list , void *value)
 {
-    Listode *node = calloc(1, sizeof(ListNode));
+    ListNode *node = calloc(1, sizeof(ListNode));
     check_mem(node);
+    node->value = value;
 
     if(list->first == NULL) {
         list->first = node;
         list->last = node;
     } else {
         node->next = list->first;
-        list->first ->prev = node;
+        list->first->prev = node;
         list->first = node;
     }
 
-    List->count++;
+    list->count++;
 error:
     return;
 
@@ -84,20 +86,20 @@ void *List_remove(List *list, ListNode *node)
     check(list->first && list->last, "List is empty.");
     check(node, "node cna't be NULL");
     if(node == list->first && node == list->last ) {
-        list->first = NULL:
-        list->last = NULL:
+        list->first = NULL;
+        list->last = NULL;
     }else if (node == list->first) {
         list->first = node->next;
-        check(list->first- != NULL, "Invalide list, shomehow got a first that is NULL.");
+        check(list->first != NULL, "Invalid list, somehow got a first that is NULL.");
         list->first->prev = NULL;
     } else if (node == list->last) {
         list->last = node->prev;
-        check(list->last != NULL, "Invalid list, shomehow got a next that is NULL.");
+        check(list->last != NULL, "Invalid list, somehow got a next that is NULL.");
         list->last->next = NULL;
     } else {
         ListNode *after = node->next;
         ListNode *before = node->prev;
-        afater->prev = before;
+        after->prev = before;
         before->next = after;
     }
 
