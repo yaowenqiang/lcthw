@@ -30,6 +30,8 @@ int List_bubble_sort(List *list , List_compare cmp)
     return 0;
 }
 
+/*
+
 inline List *List_merge(List *left, List *right, List_compare cmp)
 {
     List *result = List_create();
@@ -53,6 +55,7 @@ inline List *List_merge(List *left, List *right, List_compare cmp)
 
     return result;
 }
+*/
 
 List *List_merge_sort(List *list, List_compare cmp)
 {
@@ -82,6 +85,7 @@ List *List_merge_sort(List *list, List_compare cmp)
         List_destroy(right);
     }
 
-    return List_merge(sort_left, sort_right, cmp);
+    //return List_merge(sort_left, sort_right, cmp);
 
+    return sort_left;
 }

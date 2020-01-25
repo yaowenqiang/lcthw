@@ -15,8 +15,10 @@ DArray *DArray_create(size_t element_size, size_t initial_max)
     array->expand_rate = DEFAULT_EXPAND_RATE;
     return array;
 error:
-    if(array) free(array);
-    return NULL:
+    if(array){
+        free(array);
+    }
+    return NULL;
 }
 
 
@@ -49,8 +51,7 @@ error:
 int DArray_expand(DArray *array)
 {
     size_t old_max = array->max;
-    check(DArray_resize(array, array->max + array->expand_rate) == 0, "failed to expand array to new size: %d", 
-            array->max + (int)array->expand_rate);
+    check(DArray_resize(array, array->max + array->expand_rate) == 0, "failed to expand array to new size: %d", array->max + (int)array->expand_rate);
 
     memset(array->contents + old_max, 0, array->expand_rate + 1);
     return 0;
@@ -60,7 +61,7 @@ error:
 
 int DArray_contract(DArray *array)
 {
-    int new_size = array->end < (int)array->expand_rate ? (int)array->expand_rate : array_end;
+    int new_size = array->end < (int)array->expand_rate ? (int)array->expand_rate : array->end;
     return DArray_resize(array, new_size + 1);
 }
 
@@ -77,6 +78,19 @@ void DArray_clear_destroy(DArray *array)
 {
     DArray_clear(array);
     DArray_destroy(array);
+}
+
+int DArray_resize(DArray *array, size_t newsize)
+{
+    array->max = newsize;
+    check(array->max > 0, "The newsize must be > 0.");
+
+    void *contents = realloc(array->contents, array->max * sizeof(void *));
+
+    check_mem(contents);
+    return 0;
+error:
+    return -1;
 }
 
 int DArray_push(DArray *array, void *el) 
@@ -96,7 +110,7 @@ void *DArray_pop(DArray *array)
     check(array->end -1 >= 0, "Attempt to pop from empty array.");
     void *el = DArray_remove(array, array->end - 1);
     array->end--;
-    if(DArray_end(array) > (int)array->expand_rate && DArray_end(array) % aray->expand_rate) {
+    if(DArray_end(array) > (int)array->expand_rate && DArray_end(array) % array->expand_rate) {
         DArray_contract(array);
     }
     return el;

@@ -38,6 +38,13 @@ char *test_set()
 }
 
 
+char *test_get()
+{
+    mu_assert(DArray_get(array, 0) == val1, "Wrong first value.");
+    mu_assert(DArray_get(array, 1) == val2, "Wrong second value.");
+    return NULL;
+}
+
 char *test_remove()
 {
     int *val_check = DArray_remove(array, 0);
@@ -58,9 +65,9 @@ char *test_remove()
 
 char *test_expand_contract()
 {
-    void old_max = arrray->max;
+    int old_max = array->max;
     DArray_expand(array);
-    mu_assert((unsigned int)array0->max == old_max + array->expand_rate, "Wrong sizef after expand");
+    mu_assert((unsigned int)array->max == old_max + array->expand_rate, "Wrong sizef after expand");
     DArray_contract(array);
     mu_assert((unsigned int)array->max == array->expand_rate + 1, "Should stay at the expand_rate at least.");
     return NULL;
